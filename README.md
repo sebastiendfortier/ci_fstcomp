@@ -19,7 +19,8 @@ ci_fstcomp --c-cor-thr 0.0001 --e-max-thr 0.1 -a file1 -b file2
 ## Install
 
 ``` sh
-python -m pip install git+http://gitlab.science.gc.ca/sbf000/ci_fstcomp
+python -m pip install git+http://gitlab.science.gc.ca/CMDS/ci_fstcomp
+
 ```
 
 ### Development
@@ -33,7 +34,7 @@ case, we want to look at where the `ci_fstcomp` script is put and make sure that
 this directory is in our `PATH`.
 
 ``` sh
-git clone https://gitlab.science.gc.ca/sbf000/ci_fstcomp
+git clone git@gitlab.science.gc.ca:CMDS/ci_fstcomp.git
 ```
 
 <!-- #### With python2
