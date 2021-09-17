@@ -151,8 +151,9 @@ def compute_fstcomp_stats(diff: pd.DataFrame,path1:str,path2:str,e_max=0.0001,e_
         load_data(path1, df, x=True)
         load_data(path2, df)
         
-        logging.debug('diff dx\n%s' % df[['nomvar','d_x']])
-        logging.debug('diff dy\n%s' % df[['nomvar','d_y']])
+        if logging.root.level <= logging.DEBUG:
+          logging.debug('diff dx\n%s' % df[['nomvar','d_x']])
+          logging.debug('diff dy\n%s' % df[['nomvar','d_y']])
         to_drop = []
         for i in df.index:
             a = np.array(df.at[i, 'd_x'].ravel(),dtype=np.float32,order='F')
