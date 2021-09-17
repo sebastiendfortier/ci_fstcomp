@@ -159,8 +159,8 @@ def compute_fstcomp_stats(diff: pd.DataFrame,path1:str,path2:str,e_max=0.0001,e_
           logging.debug('diff dy\n%s' % df[['nomvar','d_y']])
         to_drop = []
         for i in df.index:
-            a = np.array(df.at[i, 'd_x'].ravel(),dtype=np.float32,order='F')
-            b = np.array(df.at[i, 'd_y'].ravel(),dtype=np.float32,order='F')
+            a = np.asarray(df.at[i, 'd_x'].ravel(order='F'),dtype=np.float32,order='F')
+            b = np.asarray(df.at[i, 'd_y'].ravel(order='F'),dtype=np.float32,order='F')
             if np.allclose(a,b):
                 to_drop.append(i)
                 continue
