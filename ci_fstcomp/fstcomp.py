@@ -126,6 +126,9 @@ def fstcomp_df(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_num
 
     diff = common
 
+    # Sort by key to speed up reading of the first file.
+    diff = diff.sort_values(by='key_x')
+
     diff = add_fstcomp_columns(diff)
 
     diff,success = compute_fstcomp_stats(diff,path1,path2,e_max,e_c_cor)
