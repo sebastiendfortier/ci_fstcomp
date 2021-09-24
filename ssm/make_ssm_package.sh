@@ -3,9 +3,9 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 ROOT_DIR=${DIR:0:${#DIR}-3}
 echo ${ROOT_DIR}
-cd ${ROOT_DIR}/ci_fstcomp
-make clean
-make
+# cd ${ROOT_DIR}/ci_fstcomp
+# make clean
+# make
 cd ${DIR}
 VERSION=$(head -n 1 ${ROOT_DIR}VERSION)
 PLAT=${ORDENV_PLAT}
