@@ -9,7 +9,6 @@ v_file = open("VERSION")
 __version__ = v_file.readline()
 v_file.close()
 
-    
 
 setuptools.setup(
     name='ci_fstcomp',
