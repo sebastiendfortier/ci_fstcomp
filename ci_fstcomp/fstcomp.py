@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 from .dataframe import add_fstcomp_columns, del_fstcomp_columns, remove_meta_data_fields
-from .fstcompstats import fstcompstats
+
 from .std_io import get_dataframe, load_data
 
 
@@ -63,7 +63,7 @@ def fstcomp_df(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_num
             logging.error('file 1 is empty')
         if df2.empty:
             logging.error('file 2 is empty')
-        raise fstpy.FstCompError('ci_fstcomp - one of the files is empty')
+        raise FstCompError('ci_fstcomp - one of the files is empty')
 
 
     if exclude_meta:
@@ -136,7 +136,7 @@ def fstcomp_df(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_num
     diff = del_fstcomp_columns(diff)
 
     if len(diff.index):
-        logging.info('\n%s'%diff[['nomvar', 'etiket', 'ip1', 'ip2', 'ip3', 'e_rel_max', 'e_rel_moy', 'var_a', 'var_b', 'c_cor', 'moy_a', 'moy_b', 'bias', 'e_max', 'e_moy']].to_string(formatters={'level': '{:,.6f}'.format,'diff_percent': '{:,.1f}%'.format}))
+        logging.info('\n%s'%diff[['nomvar', 'etiket', 'ip1', 'ip2', 'ip3', 'e_rel_max', 'e_rel_moy', 'var_a', 'var_b', 'c_cor', 'moy_a', 'moy_b', 'bias', 'e_max', 'e_moy']].to_string(formatters={'level': '{:,.6f}'.format, 'diff_percent': '{:,.1f}%'.format}))
 
     if len(missing.index):
         logging.error('missing df')
@@ -157,23 +157,64 @@ def compute_fstcomp_stats(diff: pd.DataFrame,path1:str,path2:str,e_max=0.0001,e_
         if logging.root.level <= logging.DEBUG:
           logging.debug('diff dx\n%s' % df[['nomvar','d_x']])
           logging.debug('diff dy\n%s' % df[['nomvar','d_y']])
-        to_drop = []
-        for i in df.index:
-            a = np.asarray(df.at[i, 'd_x'].ravel(order='F'),dtype=np.float32,order='F')
-            b = np.asarray(df.at[i, 'd_y'].ravel(order='F'),dtype=np.float32,order='F')
-            if np.allclose(a,b):
-                to_drop.append(i)
-                continue
-            n = a.size
 
-            df.at[i, 'e_rel_max'], df.at[i, 'e_rel_moy'], df.at[i, 'var_a'], df.at[i, 'var_b'], df.at[i, 'c_cor'], df.at[i, 'moy_a'], df.at[i, 'moy_b'], df.at[i, 'bias'], df.at[i, 'e_max'], df.at[i, 'e_moy'] = fstcompstats(a=a, b=b, n=n)
+        vstats = np.vectorize(stats, otypes=['float32', 'float32', 'float32', 'float32', 'float32', 'float32', 'float32', 'float32', 'float32', 'float32', 'str', 'bool'])
 
-            if (not (-e_c_cor <= abs(df.at[i, 'c_cor']-1.0) <= e_c_cor)) or (not (-e_max <= df.at[i, 'e_max'] <= e_max)):
-                df.at[i, 'nomvar'] = '<' + df.at[i, 'nomvar'] + '>'
-                success = False
+        df['e_rel_max'], df['e_rel_moy'], df['var_a'], df['var_b'], df['c_cor'], df['moy_a'], df['moy_b'], df['bias'], df['e_max'], df['e_moy'], df['nomvar'], df['success'] = vstats(df['d_x'].values, df['d_y'].values, df['nomvar'].values, np.full_like(df['nomvar'],e_c_cor,dtype='float32'), np.full_like(df['nomvar'],e_max,dtype='float32'))
+
         df['d_x']=None
         df['d_y']=None
-        df.drop(to_drop,inplace=True)
+
     diff = pd.concat(df_list,ignore_index=True)
 
-    return diff,success
+    return diff,df.loc[df.success==False].empty
+
+
+def stats(a, b, nomvar, e_c_cor, e_max):
+    success = True
+    new_nomvar = nomvar
+
+    if np.allclose(a,b):
+        return 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., new_nomvar, success
+    
+    errabs = np.abs(a-b)
+    errmoy = np.mean(errabs)
+
+    errmax = np.max(errabs)
+
+    derr = np.where(a != 0., np.abs(1.-b/a), np.where(b != 0., np.abs(1.-a/b), 0.))
+    derr = np.where(derr < 0., 0., derr)
+
+    errrelmax = np.max(derr)
+
+    errrelmoy = np.mean(derr)
+
+    moya = np.sum(a)/a.size
+    moyb = np.sum(b)/a.size
+
+    aa  = a-moya
+    bb  = b-moyb
+    ccor = np.sum(aa * bb)
+
+    bias = moyb-moya
+
+    sa2 = np.sum(aa**2)
+    sb2 = np.sum(bb**2)
+
+    vara = sa2/a.size
+    varb = sb2/a.size
+
+    if (sa2*sb2 != 0.):
+        ccor = ccor/np.sqrt(sa2*sb2)
+    elif (sa2 == 0. and sb2 == 0.):
+        ccor = 1.0
+    elif (sa2 == 0.):
+        ccor = np.sqrt(varb)
+    else:
+        ccor = np.sqrt(vara)
+
+    if (not (-e_c_cor <= abs(ccor-1.0) <= e_c_cor)) or (not (-e_max <= errmax <= e_max)):
+        new_nomvar = ''.join(['<', nomvar, '>'])    
+        success = False
+
+    return errrelmax, errrelmoy, vara, varb, ccor, moya, moyb, bias, errmax, errmoy, new_nomvar, success

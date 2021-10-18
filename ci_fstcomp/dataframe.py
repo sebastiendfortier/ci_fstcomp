@@ -30,11 +30,12 @@ def strip_string_values(df):
 
 
 def del_fstcomp_columns(diff: pd.DataFrame) -> pd.DataFrame:
-    diff.drop(columns=['abs_diff'], inplace=True,errors='ignore')
+    # diff.drop(columns=['abs_diff'], inplace=True,errors='ignore')
+    diff.drop(columns=['success'], inplace=True,errors='ignore')
     return diff
     
 def add_fstcomp_columns(diff: pd.DataFrame) -> pd.DataFrame:
-    diff['abs_diff'] = None# = diff['d_x'].copy(deep=True)
+    # diff['abs_diff'] = None# = diff['d_x'].copy(deep=True)
     diff['e_rel_max'] = None# = diff['d_x'].copy(deep=True)
     diff['e_rel_moy'] = None# = diff['d_x'].copy(deep=True)
     diff['var_a'] = None# = diff['d_x'].copy(deep=True)
@@ -45,6 +46,7 @@ def add_fstcomp_columns(diff: pd.DataFrame) -> pd.DataFrame:
     diff['bias'] = None #= diff['d_x'].copy(deep=True)
     diff['e_max'] = None# = diff['d_x'].copy(deep=True)
     diff['e_moy'] = None# = diff['d_x'].copy(deep=True)
+    diff['success'] = None
     # diff.drop(columns=['d_x', 'd_y'], inplace=True,errors='ignore')
     return diff
 
