@@ -13,9 +13,11 @@ print_and_do(){
 }
 
 load_runtime_dependencies(){
-    message "Loading runtime dependencies ..."
-    print_and_do . r.load.dot eccc/mrd/rpn/MIG/ENV/migdep/5.1.1
-    print_and_do . r.load.dot eccc/mrd/rpn/MIG/ENV/rpnpy/2.1.2
+    message "Load rpnpy if you dont have it ..."
+    message . r.load.dot eccc/mrd/rpn/MIG/ENV/migdep/5.1.1
+    message . r.load.dot eccc/mrd/rpn/MIG/ENV/rpnpy/2.1.2
+   #  print_and_do . r.load.dot eccc/mrd/rpn/MIG/ENV/migdep/5.1.1
+   #  print_and_do . r.load.dot eccc/mrd/rpn/MIG/ENV/rpnpy/2.1.2
 }
 
 main
