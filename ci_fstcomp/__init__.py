@@ -2,13 +2,11 @@
 import os
 from pathlib import Path
 
-from .fstcomp import *
 from .dataframe import *
+from .fstcomp import *
 from .std_io import *
-from .fstcompstats import *
 
-
-#p = Path(os.path.abspath(__file__))
-#v_file = open(p.parent.parent / 'VERSION')
-#__version__ = v_file.readline().strip()
-#v_file.close()
+p = Path(os.path.abspath(__file__))
+v_file = open(p.parent / 'VERSION')
+__version__ = v_file.readline().strip()
+v_file.close()

@@ -2,13 +2,10 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 ROOT_DIR=${DIR:0:${#DIR}-3}
-echo ${ROOT_DIR}
-# cd ${ROOT_DIR}/ci_fstcomp
-# make clean
-# make
+echo $ROOT_DIR
 cd ${DIR}
 VERSION=$(head -n 1 ${ROOT_DIR}VERSION)
-PLAT=${ORDENV_PLAT}
+PLAT=all
 #echo ${VERSION}
 
 name=cifstcomp
@@ -36,23 +33,19 @@ echo '}' >> control.json
 
 
 echo 'Building package '${PKGNAME}
-mkdir -p ${PKGNAME}/lib/python/$pyname
+mkdir -p ${PKGNAME}/lib/python/${pyname}
 mkdir -p ${PKGNAME}/.ssm.d
 mkdir -p ${PKGNAME}/bin
 mkdir -p ${PKGNAME}/share
 mkdir -p ${PKGNAME}/etc/profile.d
 
-PROJECT_ROOT=$ROOT_DIR/$pyname
-echo $PROJECT_ROOT
+PROJECT_ROOT=$ROOT_DIR/${pyname}
 echo 'Copying files to '${PKGNAME}' directory'
 cp ssm_package_setup.sh ${PKGNAME}/etc/profile.d/${PKGNAME}.sh
 cp control.json ${PKGNAME}/.ssm.d/.
 cp -rf ${PROJECT_ROOT}/ci_fstcomp.py ${PKGNAME}/bin/ci_fstcomp
 chmod 755 ${PKGNAME}/bin/ci_fstcomp
-cp -rf ${PROJECT_ROOT}/*.py ${PKGNAME}/lib/python/$pyname/.
-cp -rf ${PROJECT_ROOT}/*.f90 ${PKGNAME}/lib/python/$pyname/.
-cp -rf ${PROJECT_ROOT}/*.so ${PKGNAME}/lib/python/$pyname/.
-cp -rf ${PROJECT_ROOT}/Makefile ${PKGNAME}/lib/python/$pyname/.
+cp -rf ${PROJECT_ROOT}/* ${PKGNAME}/lib/python/${pyname}/.
 cp -rf requirements.txt ${PKGNAME}/share/.
 echo 'Creating ssm archive '${PKGNAME}'.ssm'
 tar -zcvf ${PKGNAME}.ssm ${PKGNAME}
