@@ -135,6 +135,8 @@ def fstcomp_df(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_num
 
     diff, success = compute_fstcomp_stats(diff, path1, path2, e_max, e_c_cor)
 
+    diff = diff.loc[(diff.c_cor != -1.) & (diff.nomvar.str.startswith('<'))]
+
     diff = del_fstcomp_columns(diff)
 
     if len(diff.index):
@@ -181,7 +183,7 @@ def stats(a, b, nomvar, e_c_cor, e_max):
     new_nomvar = nomvar
 
     if np.allclose(a, b):
-        return 0., 0., 0., 0., 1., 0., 0., 0., 0., 0., new_nomvar, success
+        return 0., 0., 0., 0., -1., 0., 0., 0., 0., 0., new_nomvar, success
 
     errabs = np.abs(a-b)
     errmoy = np.mean(errabs)
