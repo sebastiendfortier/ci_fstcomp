@@ -13,8 +13,12 @@ print_and_do(){
 }
 
 load_runtime_dependencies(){
-    print_and_do . r.load.dot eccc/mrd/rpn/MIG/ENV/migdep/5.1.1
-    print_and_do . r.load.dot eccc/mrd/rpn/MIG/ENV/rpnpy/2.1.2
+   if [[ ! "$PYTHONPATH" == *"rpnpy_2.2.0"* ]]
+   then 
+      print_and_do . r.load.dot eccc/mrd/rpn/MIG/ENV/migdep/5.1.1
+      # print_and_do . r.load.dot eccc/mrd/rpn/MIG/ENV/rpnpy/2.1.2
+      print_and_do . r.load.dot eccc/mrd/rpn/MIG/ENV/x/rpnpy/2.2.0-a11
+   fi
 }
 
 main
