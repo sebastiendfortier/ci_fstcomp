@@ -190,7 +190,9 @@ def stats(a, b, nomvar, e_c_cor, e_max):
 
     errmax = np.max(errabs)
 
+    old_settings = np.seterr(invalid='ignore')
     derr = np.where(a != 0., np.abs(1.-b/a), np.where(b != 0., np.abs(1.-a/b), 0.))
+    np.seterr(**old_settings)
     derr = np.where(derr < 0., 0., derr)
 
     errrelmax = np.max(derr)
