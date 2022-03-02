@@ -145,7 +145,7 @@ def fstcomp_df(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_num
 
     if len(missing.index):
         logging.error('missing df')
-        logging.error('\n%s' % missing[['nomvar', 'etiket', 'ip1', 'ip2', 'ip3']].to_string(
+        logging.error('\n%s' % missing[['nomvar', 'etiket', 'typvar', 'ip1', 'ip2', 'ip3']].to_string(
             header=False, formatters={'level': '{:,.6f}'.format}))
         return False
 
