@@ -16,14 +16,14 @@ class FstCompError(Exception):
     pass
 
 
-def fstcomp(file1: str, file2: str, exclude_meta=False, cmp_number_of_fields=True, columns=['nomvar', 'etiket', 'ni', 'nj', 'nk', 'dateo', 'ip1', 'ip2', 'ip3', 'deet', 'npas', 'grtyp', 'ig1', 'ig2', 'ig3', 'ig4'], verbose=False, e_max=0.0001, e_c_cor=0.00001) -> bool:
+def fstcomp(file1: str, file2: str, exclude_meta=False, cmp_number_of_fields=True, columns=['nomvar', 'etiket', 'typvar', 'ni', 'nj', 'nk', 'dateo', 'ip1', 'ip2', 'ip3', 'deet', 'npas', 'grtyp', 'ig1', 'ig2', 'ig3', 'ig4'], verbose=False, e_max=0.0001, e_c_cor=0.00001) -> bool:
     """Utility used to compare the contents of two RPN standard files (record by record).
 
     :param file1: path to file 1
     :type file1: str
     :param file2: path to file 2
     :type file2: str
-    :param columns: columns to be considered, defaults to ['nomvar', 'etiket', 'ni', 'nj', 'nk', 'dateo', 'ip1', 'ip2', 'ip3', 'deet', 'npas', 'grtyp', 'ig1', 'ig2', 'ig3', 'ig4']
+    :param columns: columns to be considered, defaults to ['nomvar', 'etiket', 'typvar', 'ni', 'nj', 'nk', 'dateo', 'ip1', 'ip2', 'ip3', 'deet', 'npas', 'grtyp', 'ig1', 'ig2', 'ig3', 'ig4']
     :type columns: list, optional
     :param verbose: if activated prints more information, defaults to False
     :type verbose: bool, optional
@@ -44,7 +44,7 @@ def fstcomp(file1: str, file2: str, exclude_meta=False, cmp_number_of_fields=Tru
     return fstcomp_df(df1, df2, exclude_meta, cmp_number_of_fields, columns, print_unmatched=verbose, e_max=e_max, e_c_cor=e_c_cor)
 
 
-def fstcomp_df(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_number_of_fields=True, columns=['nomvar', 'etiket', 'ni', 'nj', 'nk', 'dateo', 'ip1', 'ip2', 'ip3', 'deet', 'npas', 'grtyp', 'ig1', 'ig2', 'ig3', 'ig4'], print_unmatched=False, e_max=0.0001, e_c_cor=0.00001) -> bool:
+def fstcomp_df(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_number_of_fields=True, columns=['nomvar', 'etiket', 'typvar', 'ni', 'nj', 'nk', 'dateo', 'ip1', 'ip2', 'ip3', 'deet', 'npas', 'grtyp', 'ig1', 'ig2', 'ig3', 'ig4'], print_unmatched=False, e_max=0.0001, e_c_cor=0.00001) -> bool:
     path1 = df1.path.unique()[0]
     path2 = df2.path.unique()[0]
 
@@ -84,8 +84,8 @@ def fstcomp_df(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_num
             return False
     # create common fields
     if print_unmatched:
-        logging.debug('\n%s' % df1[['nomvar', 'etiket', 'ni', 'nj', 'nk', 'dateo']])
-        logging.debug('\n%s' % df2[['nomvar', 'etiket', 'ni', 'nj', 'nk', 'dateo']])
+        logging.debug('\n%s' % df1[['nomvar', 'etiket', 'typvar', 'ni', 'nj', 'nk', 'dateo']])
+        logging.debug('\n%s' % df2[['nomvar', 'etiket', 'typvar', 'ni', 'nj', 'nk', 'dateo']])
         logging.debug('\n%s' % df1[['ip1', 'ip2', 'ip3', 'deet', 'npas']])
         logging.debug('\n%s' % df2[['ip1', 'ip2', 'ip3', 'deet', 'npas']])
         logging.debug('\n%s' % df1[['grtyp', 'ig1', 'ig2', 'ig3', 'ig4']])
@@ -114,11 +114,11 @@ def fstcomp_df(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_num
     else:
         logging.error('ci_fstcomp - no common df to compare')
         if not df1.empty:
-            logging.error('A \n%s' % df1[['nomvar', 'etiket', 'ni', 'nj', 'nk', 'dateo', 'ip1', 'ip2', 'ip3',
+            logging.error('A \n%s' % df1[['nomvar', 'etiket', 'typvar', 'ni', 'nj', 'nk', 'dateo', 'ip1', 'ip2', 'ip3',
                           'deet', 'npas', 'grtyp', 'ig1', 'ig2', 'ig3', 'ig4']].reset_index(drop=True).to_string())
         logging.info('----------')
         if not df2.empty:
-            logging.error('B \n%s' % df2[['nomvar', 'etiket', 'ni', 'nj', 'nk', 'dateo', 'ip1', 'ip2', 'ip3',
+            logging.error('B \n%s' % df2[['nomvar', 'etiket', 'typvar', 'ni', 'nj', 'nk', 'dateo', 'ip1', 'ip2', 'ip3',
                           'deet', 'npas', 'grtyp', 'ig1', 'ig2', 'ig3', 'ig4']].reset_index(drop=True).to_string())
         raise FstCompError('ci_fstcomp - no common df to compare')
 
@@ -140,7 +140,7 @@ def fstcomp_df(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_num
     diff = del_fstcomp_columns(diff)
 
     if len(diff.index):
-        logging.info('\n%s' % diff[['nomvar', 'etiket', 'ip1', 'ip2', 'ip3', 'e_rel_max', 'e_rel_moy', 'var_a', 'var_b', 'c_cor', 'moy_a',
+        logging.info('\n%s' % diff[['nomvar', 'etiket', 'typvar', 'ip1', 'ip2', 'ip3', 'e_rel_max', 'e_rel_moy', 'var_a', 'var_b', 'c_cor', 'moy_a',
                      'moy_b', 'bias', 'e_max', 'e_moy']].to_string(formatters={'level': '{:,.6f}'.format, 'diff_percent': '{:,.1f}%'.format}))
 
     if len(missing.index):
