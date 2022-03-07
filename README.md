@@ -13,9 +13,16 @@ ci_fstcomp --c-cor-thr 0.0001 --e-max-thr 0.1 -a file1 -b file2
 <!-- - python 2.7 + -->
 - make sure to load rmnlib
 
+- U1
 ``` sh
 . r.load.dot eccc/mrd/rpn/MIG/ENV/migdep/5.1.1 eccc/mrd/rpn/MIG/ENV/rpnpy/2.1.2
 ```
+
+- U2
+``` sh
+. r.load.dot eccc/mrd/rpn/MIG/ENV/rpnpy/2.1-u2.3 eccc/mrd/rpn/MIG/ENV/migdep/5.1-u2.2 eccc/cmd/cmda/libs/20220216/inteloneapi-2022.1.2
+```
+
 ## Install
 
 ``` sh
