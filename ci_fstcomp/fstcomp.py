@@ -3,6 +3,7 @@
 import logging
 import math
 import os
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -181,47 +182,48 @@ def compute_fstcomp_stats(diff: pd.DataFrame, path1: str, path2: str, e_max=0.00
 def stats(a, b, nomvar, e_c_cor, e_max):
     success = True
     new_nomvar = nomvar
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        if np.allclose(a, b):
+            return 0., 0., 0., 0., -1., 0., 0., 0., 0., 0., new_nomvar, success
 
-    if np.allclose(a, b):
-        return 0., 0., 0., 0., -1., 0., 0., 0., 0., 0., new_nomvar, success
+        errabs = np.abs(a-b)
+        errmoy = np.mean(errabs)
 
-    errabs = np.abs(a-b)
-    errmoy = np.mean(errabs)
+        errmax = np.max(errabs)
 
-    errmax = np.max(errabs)
 
-    old_settings = np.seterr(invalid='ignore')
-    derr = np.where(a != 0., np.abs(1.-b/a), np.where(b != 0., np.abs(1.-a/b), 0.))
-    np.seterr(**old_settings)
-    derr = np.where(derr < 0., 0., derr)
+        derr = np.where(a != 0., np.abs(1.-b/a), np.where(b != 0., np.abs(1.-a/b), 0.))
 
-    errrelmax = np.max(derr)
+        derr = np.where(derr < 0., 0., derr)
 
-    errrelmoy = np.mean(derr)
+        errrelmax = np.max(derr)
 
-    moya = np.sum(a)/a.size
-    moyb = np.sum(b)/a.size
+        errrelmoy = np.mean(derr)
 
-    aa = a-moya
-    bb = b-moyb
-    ccor = np.sum(aa * bb)
+        moya = np.sum(a)/a.size
+        moyb = np.sum(b)/a.size
 
-    bias = moyb-moya
+        aa = a-moya
+        bb = b-moyb
+        ccor = np.sum(aa * bb)
 
-    sa2 = np.sum(aa**2)
-    sb2 = np.sum(bb**2)
+        bias = moyb-moya
 
-    vara = sa2/a.size
-    varb = sb2/a.size
+        sa2 = np.sum(aa**2)
+        sb2 = np.sum(bb**2)
 
-    if (sa2*sb2 != 0.):
-        ccor = ccor/np.sqrt(sa2*sb2)
-    elif (sa2 == 0. and sb2 == 0.):
-        ccor = 1.0
-    elif (sa2 == 0.):
-        ccor = np.sqrt(varb)
-    else:
-        ccor = np.sqrt(vara)
+        vara = sa2/a.size
+        varb = sb2/a.size
+
+        if (sa2*sb2 != 0.):
+            ccor = ccor/np.sqrt(sa2*sb2)
+        elif (sa2 == 0. and sb2 == 0.):
+            ccor = 1.0
+        elif (sa2 == 0.):
+            ccor = np.sqrt(varb)
+        else:
+            ccor = np.sqrt(vara)
 
     if (not (-e_c_cor <= abs(ccor-1.0) <= e_c_cor)) or (not (-e_max <= errmax <= e_max)):
         new_nomvar = ''.join(['<', nomvar, '>'])
