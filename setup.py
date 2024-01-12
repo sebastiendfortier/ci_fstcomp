@@ -29,7 +29,7 @@ setuptools.setup(
         "Operating System :: OS Linux",
     ],
     install_requires=[
-        'pandas>=1.0.0',
+        'pandas>=1.2.4',
     ],
     entry_points={
         'console_scripts': [
