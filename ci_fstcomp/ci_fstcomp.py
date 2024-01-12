@@ -47,6 +47,8 @@ def cli():
     parser.add_argument('--exclude_meta', type=bool, default=False, help='exclude meta data fields from comparison')
     parser.add_argument('--cmp_number_of_fields', type=bool, default=False,
                         help='compare the number of fields in each file')
+    parser.add_argument('--columns', type=str, default='nomvar, etiket, typvar, ni, nj, nk, dateo, ip1, ip2, ip3, deet, npas, grtyp, ig1, ig2, ig3, ig4',
+                        help='columns to be considered')                    
     parser.add_argument('--log_level', type=int, default=logging.INFO, help='set logging level, default logging.INFO')
     parser.add_argument('--log_stream', type=TextIO, default=sys.stdout, help='set logging stream, default sys.stdout')
 
@@ -63,6 +65,7 @@ def cli():
     # columns_to_consider = new_list
 
     # status = ci_fstcomp(file1:args.a, file2:args.b, exclude_meta=args.exclude_meta, cmp_number_of_fields=args.cmp_num_fields, ignore=ignore_items,columns=columns_to_consider, verbose=False, e_max=args.e_max_thr1, e_c_cor=args.c_cor_thr)
+
     status = fstcomp(file1=args.a, file2=args.b, exclude_meta=args.exclude_meta,
                      cmp_number_of_fields=args.cmp_number_of_fields, verbose=False, e_max=args.e_max_thr, e_c_cor=args.c_cor_thr)
 
