@@ -44,8 +44,15 @@ def fstcomp(file1: str, file2: str, exclude_meta=False, cmp_number_of_fields=Tru
 
     return fstcomp_df(df1, df2, exclude_meta, cmp_number_of_fields, columns, print_unmatched=verbose, e_max=e_max, e_c_cor=e_c_cor)
 
+def fstcomp_df_diff(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_number_of_fields=True, columns=['nomvar', 'etiket', 'typvar', 'ni', 'nj', 'nk', 'dateo', 'ip1', 'ip2', 'ip3', 'deet', 'npas', 'grtyp', 'ig1', 'ig2', 'ig3', 'ig4'], print_unmatched=False, e_max=0.0001, e_c_cor=0.00001) -> bool:
+    success, diff = fstcomp_df_compute(df1, df2, exclude_meta, cmp_number_of_fields, columns, print_unmatched, e_max, e_c_cor)
+    return success, diff
 
 def fstcomp_df(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_number_of_fields=True, columns=['nomvar', 'etiket', 'typvar', 'ni', 'nj', 'nk', 'dateo', 'ip1', 'ip2', 'ip3', 'deet', 'npas', 'grtyp', 'ig1', 'ig2', 'ig3', 'ig4'], print_unmatched=False, e_max=0.0001, e_c_cor=0.00001) -> bool:
+    success, _ = fstcomp_df_compute(df1, df2, exclude_meta, cmp_number_of_fields, columns, print_unmatched, e_max, e_c_cor)
+    return success
+
+def fstcomp_df_compute(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_number_of_fields=True, columns=['nomvar', 'etiket', 'typvar', 'ni', 'nj', 'nk', 'dateo', 'ip1', 'ip2', 'ip3', 'deet', 'npas', 'grtyp', 'ig1', 'ig2', 'ig3', 'ig4'], print_unmatched=False, e_max=0.0001, e_c_cor=0.00001) -> bool:
     path1 = df1.path.unique()[0]
     path2 = df2.path.unique()[0]
 
@@ -150,7 +157,7 @@ def fstcomp_df(df1: pd.DataFrame, df2: pd.DataFrame, exclude_meta=False, cmp_num
             header=False, formatters={'level': '{:,.6f}'.format}))
         return False
 
-    return success
+    return success, diff
 
 
 def compute_fstcomp_stats(diff: pd.DataFrame, path1: str, path2: str, e_max=0.0001, e_c_cor=0.00001) -> bool:
